@@ -70,10 +70,10 @@ public class Expression {
                             }
                         } else {
                             if (
-                                Operation.getBySymbol(expressionChars[i - 1]) != null
-                                &&
-                                Operation.getBySymbol(expressionChars[i + 1]) == null
-                            ) {
+                                    Operation.getBySymbol(expressionChars[i - 1]) != null
+                                            &&
+                                            Operation.getBySymbol(expressionChars[i + 1]) == null
+                                    ) {
                                 operands.set(operands.size() - 1, Character.toString(expressionChars[i]));
                             } else {
                                 operations.add(Character.toString(expressionChars[i]));
@@ -235,7 +235,7 @@ public class Expression {
         operands.remove(operationIndex + 1);
         operations.remove(operationIndex);
     }
-    
+
     private void validate(LinkedList<Operation> operations, LinkedList operands){
 
         if (operands == null || operations == null)
@@ -247,7 +247,7 @@ public class Expression {
         if ( operands.size() - 1 != operations.size() )
             throw new IllegalArgumentException("wrong operands/operations count: " + (operands.size() - 1) + " " + operations.size());
 
-        operands.forEach((operand) -> {
+        operands.forEach(operand -> {
             if (operand == null) throw new IllegalArgumentException("null operand");
             if (!(operand instanceof Integer) && !(operand instanceof Number) && !(operand instanceof Expression)) throw new IllegalArgumentException("wrong type of operand: " + operand);
         });
@@ -259,19 +259,19 @@ public class Expression {
         for (int i = 0; i < operands.size() - 1; i++) {
             expressionBuilder.append(
                     (
-                        operands.get(i) instanceof Number
-                            ? operands.get(i)
-                            : "( " + operands.get(i) + " )"
+                            operands.get(i) instanceof Number
+                                    ? operands.get(i)
+                                    : "( " + operands.get(i) + " )"
                     ) +
-                " " +
-                operations.get(i) +
-                " "
+                            " " +
+                            operations.get(i) +
+                            " "
             );
         }
         return expressionBuilder.append(
-            operands.get(operands.size() - 1) instanceof Number
-                ? operands.get(operands.size() - 1)
-                : "( " + operands.get(operands.size() - 1) + " )"
+                operands.get(operands.size() - 1) instanceof Number
+                        ? operands.get(operands.size() - 1)
+                        : "( " + operands.get(operands.size() - 1) + " )"
         ).toString();
     }
 
@@ -283,49 +283,49 @@ public class Expression {
         return result;
     }
 
-}
+    private enum Operation {
 
-enum Operation {
+        plus('+', 2),
+        minus('-', 2),
+        multiplication('*', 1),
+        division('/', 1)
+        ;
 
-    plus('+', 2),
-    minus('-', 2),
-    multiplication('*', 1),
-    division('/', 1)
-    ;
-
-    public static Operation getBySymbol(char chr) {
-        Operation operation = null;
-        switch (chr){
-            case '+':
-                operation = plus;
-                break;
-            case '-':
-                operation = minus;
-                break;
-            case '*':
-                operation = multiplication;
-                break;
-            case '/':
-                operation = division;
-                break;
+        public static Operation getBySymbol(char chr) {
+            Operation operation = null;
+            switch (chr){
+                case '+':
+                    operation = plus;
+                    break;
+                case '-':
+                    operation = minus;
+                    break;
+                case '*':
+                    operation = multiplication;
+                    break;
+                case '/':
+                    operation = division;
+                    break;
+            }
+            return operation;
         }
-        return operation;
+
+        private int prioritet;
+
+        private char symbol;
+
+        Operation(char symbol, int prioritet) {
+            this.prioritet = prioritet;
+            this.symbol = symbol;
+        }
+
+        public String toString(){
+            return Character.toString(symbol);
+        }
+
+        public int getPrioritet() {
+            return prioritet;
+        }
     }
 
-    private int prioritet;
-
-    private char symbol;
-
-    Operation(char symbol, int prioritet) {
-        this.prioritet = prioritet;
-        this.symbol = symbol;
-    }
-
-    public String toString(){
-        return Character.toString(symbol);
-    }
-
-    public int getPrioritet() {
-        return prioritet;
-    }
 }
