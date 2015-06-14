@@ -1,3 +1,5 @@
+package com.github.alexeyemelyanov.arithmetic_parser;
+
 import java.util.LinkedList;
 import java.util.HashMap;
 
