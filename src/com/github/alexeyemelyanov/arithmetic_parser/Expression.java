@@ -66,7 +66,7 @@ public class Expression {
                 if (Operation.getBySymbol(expressionChars[i]) != null) {
 
                     if (expressionChars[i] == '-' || expressionChars[i] == '+') {
-                        if (i == 0){
+                        if (i == 0) {
                             if (Operation.getBySymbol(expressionChars[i + 1]) == null) {
                                 operands.add(Character.toString(expressionChars[i]));
                             }
@@ -91,7 +91,7 @@ public class Expression {
                             throw new IllegalArgumentException("incorrect first expression symbol: " + Character.toString(expressionChars[i]));
 
                         if (Operation.getBySymbol(expressionChars[i - 1]) != null)
-                            throw new IllegalArgumentException("invalid operation: " + new String(new char[]{expressionChars[i-1], expressionChars[i]}));
+                            throw new IllegalArgumentException("invalid operation: " + new String(new char[]{expressionChars[i - 1], expressionChars[i]}));
 
                         if (i == expressionChars.length - 1)
                             throw new IllegalArgumentException("incorrect last expression symbol: " + Character.toString(expressionChars[i]));
@@ -134,13 +134,13 @@ public class Expression {
                 throw e;
             }
 
-            LinkedList<Operation> operationsEnumObjects = new LinkedList<Operation>(){
+            LinkedList<Operation> operationsEnumObjects = new LinkedList<Operation>() {
                 {
                     operations.forEach(operation -> add(Operation.getBySymbol(operation.charAt(0))));
                 }
             };
 
-            LinkedList operandsNumberAndExpressionObjects = new LinkedList(){
+            LinkedList operandsNumberAndExpressionObjects = new LinkedList() {
                 {
                     operands.forEach(operand -> {
                         try {
@@ -161,7 +161,7 @@ public class Expression {
     }
 
     private static int checkIndexInSubExpressionRange(LinkedList<Integer> expressionsBarriers, Integer index) {
-        for ( int i = 0; i < expressionsBarriers.size(); i += 2 ) {
+        for (int i = 0; i < expressionsBarriers.size(); i += 2) {
             if (index >= expressionsBarriers.get(i) && index <= expressionsBarriers.get(i + 1)) {
                 return expressionsBarriers.get(i + 1);
             }
@@ -184,7 +184,7 @@ public class Expression {
         validate(operations, operands);
         expressionString = createExpressionString(operations, operands);
         HashMap<Integer, Boolean> operationsPrioritets = new HashMap<>();
-        operations.forEach( (operation) -> operationsPrioritets.put(operation.getPrioritet(), true) );
+        operations.forEach((operation) -> operationsPrioritets.put(operation.getPrioritet(), true));
         result = calcResult(operationsPrioritets, operations, operands);
     }
 
@@ -195,10 +195,10 @@ public class Expression {
                 operationsPrioritets.put(prioritet, calcEpisode(prioritet, operations, operands));
             }
         });
-        return (Number)operands.get(0);
+        return (Number) operands.get(0);
     }
 
-    private boolean calcEpisode (int prioritet, LinkedList<Operation> operations, LinkedList operands) {
+    private boolean calcEpisode(int prioritet, LinkedList<Operation> operations, LinkedList operands) {
         // execute all operations in expression by prioritet
         for (int i = 0; i < operations.size(); i++) {
             if (operations.get(i).getPrioritet() == prioritet) {
@@ -213,11 +213,11 @@ public class Expression {
 
         Number operand1 = operands.get(operationIndex) instanceof Number
                 ? (Number) operands.get(operationIndex)
-                : ((Expression)operands.get(operationIndex)).getResult();
+                : ((Expression) operands.get(operationIndex)).getResult();
 
         Number operand2 = operands.get(operationIndex + 1) instanceof Number
                 ? (Number) operands.get(operationIndex + 1)
-                : ((Expression)operands.get(operationIndex + 1)).getResult();
+                : ((Expression) operands.get(operationIndex + 1)).getResult();
 
         switch (operations.get(operationIndex)) {
             case plus:
@@ -238,7 +238,7 @@ public class Expression {
         operations.remove(operationIndex);
     }
 
-    private void validate(LinkedList<Operation> operations, LinkedList operands){
+    private void validate(LinkedList<Operation> operations, LinkedList operands) {
 
         if (operands == null || operations == null)
             throw new IllegalArgumentException("operands/operations is null");
@@ -246,12 +246,13 @@ public class Expression {
         if (operations.size() < 1)
             throw new IllegalArgumentException("wrong operations count");
 
-        if ( operands.size() - 1 != operations.size() )
+        if (operands.size() - 1 != operations.size())
             throw new IllegalArgumentException("wrong operands/operations count: " + (operands.size() - 1) + " " + operations.size());
 
         operands.forEach(operand -> {
             if (operand == null) throw new IllegalArgumentException("null operand");
-            if (!(operand instanceof Integer) && !(operand instanceof Number) && !(operand instanceof Expression)) throw new IllegalArgumentException("wrong type of operand: " + operand);
+            if (!(operand instanceof Integer) && !(operand instanceof Number) && !(operand instanceof Expression))
+                throw new IllegalArgumentException("wrong type of operand: " + operand);
         });
     }
 
@@ -290,12 +291,11 @@ public class Expression {
         plus('+', 2),
         minus('-', 2),
         multiplication('*', 1),
-        division('/', 1)
-        ;
+        division('/', 1);
 
         public static Operation getBySymbol(char chr) {
             Operation operation = null;
-            switch (chr){
+            switch (chr) {
                 case '+':
                     operation = plus;
                     break;
@@ -321,7 +321,7 @@ public class Expression {
             this.symbol = symbol;
         }
 
-        public String toString(){
+        public String toString() {
             return Character.toString(symbol);
         }
 
