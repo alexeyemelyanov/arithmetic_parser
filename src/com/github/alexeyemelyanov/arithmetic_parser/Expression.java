@@ -20,6 +20,9 @@ public class Expression {
         Expression expression3 = parse("-1/2");
         System.out.println(expression3.getResult());
 
+        Expression expression4 = parse("+1+-1");
+        System.out.println(expression4.getResult());
+
     }
 
     public static Expression parse(String expressionString) {
