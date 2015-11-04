@@ -14,15 +14,6 @@ public class Expression {
         Expression expression = parse("((-1+7)+(-1.9 *2)+((5.5 * 6.1)/+1 + (3 / 4 - 1)) * ( 1 / 1 ) / 1)");
         System.out.println(expression.getResult());
 
-        Expression expression2 = parse("-1+(+2)");
-        System.out.println(expression2.getResult());
-
-        Expression expression3 = parse("-1/2");
-        System.out.println(expression3.getResult());
-
-        Expression expression4 = parse("+1+-1");
-        System.out.println(expression4.getResult());
-
     }
 
     public static Expression parse(String expressionString) {
