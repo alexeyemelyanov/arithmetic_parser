@@ -9,13 +9,6 @@ public class Expression {
 
     private Number result;
 
-    public static void main(String[] args) {
-
-        Expression expression = parse("((-1+7)+(-1.9 *2)+((5.5 * 6.1)/+1 + (3 / 4 - 1)) * ( 1 / 1 ) / 1)");
-        System.out.println(expression.getResult());
-
-    }
-
     public static Expression parse(String expressionString) {
         if (expressionString == null) throw new IllegalArgumentException("must be a string, null given");
         expressionString = expressionString.replace(" ", "");
