@@ -9,6 +9,12 @@ public class Expression {
 
     private Number result;
 
+    public static void main(String[] args) {
+        Expression expression = Expression.parse("((-1+7)+(-1.9 *2)+((5.5 * 6.1)/+1 + (3 / 4 - 1)) * ( 1 / 1 ) / 1)");
+
+        System.out.println(expression.getResult());
+    }
+
     public static Expression parse(String expressionString) {
         if (expressionString == null) throw new IllegalArgumentException("must be a string, null given");
         expressionString = expressionString.replace(" ", "");
@@ -121,27 +127,24 @@ public class Expression {
                 throw e;
             }
 
-            LinkedList<Operation> operationsEnumObjects = new LinkedList<Operation>() {
-                {
-                    operations.forEach(operation -> add(Operation.getBySymbol(operation.charAt(0))));
-                }
-            };
+            LinkedList<Operation> operationsEnumObjects = new LinkedList<Operation>() {{
+                operations.forEach(operation -> add(Operation.getBySymbol(operation.charAt(0))));
+            }};
 
-            LinkedList operandsNumberAndExpressionObjects = new LinkedList() {
-                {
-                    operands.forEach(operand -> {
-                        try {
-                            if (operand.startsWith("(") && operand.endsWith(")")) {
-                                add(Double.valueOf(operand.substring(1, operand.length() - 1)));
-                            } else {
-                                add(Double.valueOf(operand));
-                            }
-                        } catch (NumberFormatException e) {
-                            add(createExpression(operand));
+            LinkedList operandsNumberAndExpressionObjects = new LinkedList() {{
+                operands.forEach(operand -> {
+                    try {
+                        if (operand.startsWith("(") && operand.endsWith(")")) {
+                            add(Double.valueOf(operand.substring(1, operand.length() - 1)));
+                        } else {
+                            add(Double.valueOf(operand));
                         }
-                    });
-                }
-            };
+                    } catch (NumberFormatException e) {
+                        validateExpressionOperand(operand);
+                        add(createExpression(operand));
+                    }
+                });
+            }};
 
             return new Expression(operationsEnumObjects, operandsNumberAndExpressionObjects);
         }
@@ -240,7 +243,18 @@ public class Expression {
             if (operand == null) throw new IllegalArgumentException("null operand");
             if (!(operand instanceof Integer) && !(operand instanceof Number) && !(operand instanceof Expression))
                 throw new IllegalArgumentException("wrong type of operand: " + operand);
+            validateExpressionOperand(operand.toString());
         });
+    }
+
+    private static void validateExpressionOperand(String operand) {
+        char first = operand.charAt(0);
+        char last = operand.charAt(operand.length() - 1);
+        if (
+            (!Character.isDigit(first) && first != '-' && first != '+' && first != '(')
+            ||
+            (!Character.isDigit(last) && last != ')')
+        )   throw new IllegalArgumentException("wrong operand: " + operand);
     }
 
     private String createExpressionString(LinkedList<Operation> operations, LinkedList operands) {
