@@ -9,10 +9,111 @@ public class Expression {
 
     private Number result;
 
-    public static void main(String[] args) {
-        Expression expression = Expression.parse("((-1+7)+(-1.9 *2)+((5.5 * 6.1)/+1 + (3 / 4 - 1)) * ( 1 / 1 ) / 1)");
+    private Expression(LinkedList<Operation> operations, LinkedList operands) {
+        validate(operations, operands);
+        expressionString = createExpressionString(operations, operands);
+        HashMap<Integer, Boolean> operationsPrioritets = new HashMap<>();
+        operations.forEach((operation) -> operationsPrioritets.put(operation.getPrioritet(), true));
+        result = calcResult(operationsPrioritets, operations, operands);
+    }
 
-        System.out.println(expression.getResult());
+    private Number calcResult(HashMap<Integer, Boolean> operationsPrioritets, LinkedList<Operation> operations, LinkedList operands) {
+        operationsPrioritets.forEach((prioritet, flag) -> {
+            // while operations by priopitets exists
+            while (operationsPrioritets.get(prioritet)) {
+                operationsPrioritets.put(prioritet, calcEpisode(prioritet, operations, operands));
+            }
+        });
+        return (Number) operands.get(0);
+    }
+
+    private boolean calcEpisode(int prioritet, LinkedList<Operation> operations, LinkedList operands) {
+        // execute all operations in expression by prioritet
+        for (int i = 0; i < operations.size(); i++) {
+            if (operations.get(i).getPrioritet() == prioritet) {
+                simpleOperation(i, operations, operands);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void simpleOperation(int operationIndex, LinkedList<Operation> operations, LinkedList operands) {
+
+        Number operand1 = operands.get(operationIndex) instanceof Number
+            ? (Number) operands.get(operationIndex)
+            : ((Expression) operands.get(operationIndex)).getResult();
+
+        Number operand2 = operands.get(operationIndex + 1) instanceof Number
+            ? (Number) operands.get(operationIndex + 1)
+            : ((Expression) operands.get(operationIndex + 1)).getResult();
+
+        switch (operations.get(operationIndex)) {
+            case plus:
+                operands.set(operationIndex, operand1.doubleValue() + operand2.doubleValue());
+                break;
+            case minus:
+                operands.set(operationIndex, operand1.doubleValue() - operand2.doubleValue());
+                break;
+            case multiplication:
+                operands.set(operationIndex, operand1.doubleValue() * operand2.doubleValue());
+                break;
+            case division:
+                operands.set(operationIndex, operand1.doubleValue() / operand2.doubleValue());
+                break;
+        }
+
+        operands.remove(operationIndex + 1);
+        operations.remove(operationIndex);
+    }
+
+    private void validate(LinkedList<Operation> operations, LinkedList operands) {
+
+        if (operands == null || operations == null)
+            throw new IllegalArgumentException("operands/operations is null");
+
+        if (operations.size() < 1)
+            throw new IllegalArgumentException("wrong operations count");
+
+        if (operands.size() - 1 != operations.size())
+            throw new IllegalArgumentException("wrong operands/operations count: " + (operands.size() - 1) + " " + operations.size());
+
+        operands.forEach(operand -> {
+            if (operand == null) throw new IllegalArgumentException("null operand");
+            if (!(operand instanceof Integer) && !(operand instanceof Number) && !(operand instanceof Expression))
+                throw new IllegalArgumentException("wrong type of operand: " + operand);
+            validateExpressionOperand(operand.toString());
+        });
+    }
+
+    private String createExpressionString(LinkedList<Operation> operations, LinkedList operands) {
+        // create string by operations and operands lists merging
+        StringBuilder expressionBuilder = new StringBuilder();
+        for (int i = 0; i < operands.size() - 1; i++) {
+            expressionBuilder.append(
+                (
+                    operands.get(i) instanceof Number
+                        ? operands.get(i)
+                        : "( " + operands.get(i) + " )"
+                ) +
+                    " " +
+                    operations.get(i) +
+                    " "
+            );
+        }
+        return expressionBuilder.append(
+            operands.get(operands.size() - 1) instanceof Number
+                ? operands.get(operands.size() - 1)
+                : "( " + operands.get(operands.size() - 1) + " )"
+        ).toString();
+    }
+
+    public String toString() {
+        return expressionString;
+    }
+
+    public Number getResult() {
+        return result;
     }
 
     public static Expression parse(String expressionString) {
@@ -170,83 +271,6 @@ public class Expression {
         return parentheses == 0;
     }
 
-    private Expression(LinkedList<Operation> operations, LinkedList operands) {
-        validate(operations, operands);
-        expressionString = createExpressionString(operations, operands);
-        HashMap<Integer, Boolean> operationsPrioritets = new HashMap<>();
-        operations.forEach((operation) -> operationsPrioritets.put(operation.getPrioritet(), true));
-        result = calcResult(operationsPrioritets, operations, operands);
-    }
-
-    private Number calcResult(HashMap<Integer, Boolean> operationsPrioritets, LinkedList<Operation> operations, LinkedList operands) {
-        operationsPrioritets.forEach((prioritet, flag) -> {
-            // while operations by priopitets exists
-            while (operationsPrioritets.get(prioritet)) {
-                operationsPrioritets.put(prioritet, calcEpisode(prioritet, operations, operands));
-            }
-        });
-        return (Number) operands.get(0);
-    }
-
-    private boolean calcEpisode(int prioritet, LinkedList<Operation> operations, LinkedList operands) {
-        // execute all operations in expression by prioritet
-        for (int i = 0; i < operations.size(); i++) {
-            if (operations.get(i).getPrioritet() == prioritet) {
-                simpleOperation(i, operations, operands);
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private void simpleOperation(int operationIndex, LinkedList<Operation> operations, LinkedList operands) {
-
-        Number operand1 = operands.get(operationIndex) instanceof Number
-                ? (Number) operands.get(operationIndex)
-                : ((Expression) operands.get(operationIndex)).getResult();
-
-        Number operand2 = operands.get(operationIndex + 1) instanceof Number
-                ? (Number) operands.get(operationIndex + 1)
-                : ((Expression) operands.get(operationIndex + 1)).getResult();
-
-        switch (operations.get(operationIndex)) {
-            case plus:
-                operands.set(operationIndex, operand1.doubleValue() + operand2.doubleValue());
-                break;
-            case minus:
-                operands.set(operationIndex, operand1.doubleValue() - operand2.doubleValue());
-                break;
-            case multiplication:
-                operands.set(operationIndex, operand1.doubleValue() * operand2.doubleValue());
-                break;
-            case division:
-                operands.set(operationIndex, operand1.doubleValue() / operand2.doubleValue());
-                break;
-        }
-
-        operands.remove(operationIndex + 1);
-        operations.remove(operationIndex);
-    }
-
-    private void validate(LinkedList<Operation> operations, LinkedList operands) {
-
-        if (operands == null || operations == null)
-            throw new IllegalArgumentException("operands/operations is null");
-
-        if (operations.size() < 1)
-            throw new IllegalArgumentException("wrong operations count");
-
-        if (operands.size() - 1 != operations.size())
-            throw new IllegalArgumentException("wrong operands/operations count: " + (operands.size() - 1) + " " + operations.size());
-
-        operands.forEach(operand -> {
-            if (operand == null) throw new IllegalArgumentException("null operand");
-            if (!(operand instanceof Integer) && !(operand instanceof Number) && !(operand instanceof Expression))
-                throw new IllegalArgumentException("wrong type of operand: " + operand);
-            validateExpressionOperand(operand.toString());
-        });
-    }
-
     private static void validateExpressionOperand(String operand) {
         char first = operand.charAt(0);
         char last = operand.charAt(operand.length() - 1);
@@ -255,36 +279,6 @@ public class Expression {
             ||
             (!Character.isDigit(last) && last != ')')
         )   throw new IllegalArgumentException("wrong operand: " + operand);
-    }
-
-    private String createExpressionString(LinkedList<Operation> operations, LinkedList operands) {
-        // create string by operations and operands lists merging
-        StringBuilder expressionBuilder = new StringBuilder();
-        for (int i = 0; i < operands.size() - 1; i++) {
-            expressionBuilder.append(
-                    (
-                            operands.get(i) instanceof Number
-                                    ? operands.get(i)
-                                    : "( " + operands.get(i) + " )"
-                    ) +
-                            " " +
-                            operations.get(i) +
-                            " "
-            );
-        }
-        return expressionBuilder.append(
-                operands.get(operands.size() - 1) instanceof Number
-                        ? operands.get(operands.size() - 1)
-                        : "( " + operands.get(operands.size() - 1) + " )"
-        ).toString();
-    }
-
-    public String toString() {
-        return expressionString;
-    }
-
-    public Number getResult() {
-        return result;
     }
 
     private enum Operation {
@@ -330,5 +324,4 @@ public class Expression {
             return prioritet;
         }
     }
-
 }
