@@ -36,7 +36,25 @@ public class ExpressionTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void parseTestInvalidString0() {
-        String string = "*((-1+7)+(-1.9 *2)+((5.5 * 6.1)/+1 + (3 / 4 - 1)) * ( 1 / 1 ) / 1)";
+        String string = "*((-1+7)+(-1.9 *2)+((5.5 * 6.1)|/+1 + (3 / 4 - 1)) * ( 1 // 1 ) / 1)";
+        Expression.parse(string);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void parseTestInvalidString1() {
+        String string = "*()";
+        Expression.parse(string);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void parseTestInvalidString2() {
+        String string = "()(-)";
+        Expression.parse(string);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void parseTestInvalidString3() {
+        String string = "(DFERFERFRF";
         Expression.parse(string);
     }
 }

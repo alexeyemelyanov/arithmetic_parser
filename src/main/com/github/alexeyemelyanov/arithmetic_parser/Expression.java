@@ -220,7 +220,7 @@ public class Expression {
             }
 
             try {
-                if (operands.size() - 1 != operations.size())
+                if (operands.size() - 1 != operations.size() || operations.size() == 0)
                     throw new IllegalArgumentException("invalid expression string");
             } catch (IllegalArgumentException e) {
                 System.err.println(operations);
