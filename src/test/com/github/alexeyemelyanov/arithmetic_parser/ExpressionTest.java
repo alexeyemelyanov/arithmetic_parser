@@ -1,10 +1,11 @@
 package com.github.alexeyemelyanov.arithmetic_parser;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 @RunWith(JUnit4.class)
 public class ExpressionTest {
@@ -19,13 +20,12 @@ public class ExpressionTest {
         assertEquals(
                 Expression.parse("-1/2").getClass(),
                 Expression.class
-                );
+        );
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void parseTestNullParam() {
-        String string = null;
-        Expression.parse(string);
+        Expression.parse(null);
     }
 
     @Test(expected = IllegalArgumentException.class)
