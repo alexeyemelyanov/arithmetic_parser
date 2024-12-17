@@ -18,8 +18,8 @@ public class ExpressionTest {
     @Test
     public void parseTestReturnClassInstance() {
         assertEquals(
-                Expression.parse("-1/2").getClass(),
-                Expression.class
+            Expression.class,
+            Expression.parse("-1/2").getClass()
         );
     }
 
